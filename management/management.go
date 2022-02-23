@@ -159,6 +159,12 @@ type Management struct {
 	// Anomaly manages the IP blocks
 	Anomaly *AnomalyManager
 
+	// Actions manages Actions extensibility
+	Action *ActionManager
+
+	// Organization manages Auth0 Organizations.
+	Organization *OrganizationManager
+
 	url         *url.URL
 	basePath    string
 	userAgent   string
@@ -227,6 +233,8 @@ func New(domain string, options ...ManagementOption) (*Management, error) {
 	m.Blacklist = newBlacklistManager(m)
 	m.SigningKey = newSigningKeyManager(m)
 	m.Anomaly = newAnomalyManager(m)
+	m.Action = newActionManager(m)
+	m.Organization = newOrganizationManager(m)
 
 	return m, nil
 }
@@ -249,7 +257,7 @@ func (m *Management) NewRequest(method, uri string, payload interface{}, options
 	if payload != nil {
 		err := json.NewEncoder(&buf).Encode(payload)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("encoding request payload failed: %w", err)
 		}
 	}
 
@@ -296,7 +304,7 @@ func (m *Management) Request(method, uri string, v interface{}, options ...Reque
 
 	res, err := m.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("request failed: %w", err)
 	}
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
@@ -306,7 +314,7 @@ func (m *Management) Request(method, uri string, v interface{}, options ...Reque
 	if res.StatusCode != http.StatusNoContent && res.StatusCode != http.StatusAccepted {
 		err := json.NewDecoder(res.Body).Decode(v)
 		if err != nil {
-			return err
+			return fmt.Errorf("decoding response payload failed: %w", err)
 		}
 		return res.Body.Close()
 	}
