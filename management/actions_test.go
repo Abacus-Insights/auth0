@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/auth0.v5"
+	"github.com/auth0/go-auth0"
 )
 
 func ensureActionBuilt(a *Action) (err error) {
@@ -29,7 +29,6 @@ func ensureActionBuilt(a *Action) (err error) {
 }
 
 func TestActions(t *testing.T) {
-
 	r := &Action{
 		Name: auth0.String("test-action"),
 		Code: auth0.String("exports.onExecutePostLogin = async (event, api) =\u003e {}"),

@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"testing"
 
-	"gopkg.in/auth0.v5"
-	"gopkg.in/auth0.v5/internal/testing/expect"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 func TestTenant(t *testing.T) {
-
 	var tn *Tenant
 	var err error
 

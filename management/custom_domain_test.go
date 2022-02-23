@@ -5,11 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/auth0.v5"
+	"github.com/auth0/go-auth0"
 )
 
 func TestCustomDomain(t *testing.T) {
-
 	c := &CustomDomain{
 		Domain:               auth0.Stringf("%d.auth.uat.alexkappa.com", time.Now().UTC().Unix()),
 		Type:                 auth0.String("auth0_managed_certs"),

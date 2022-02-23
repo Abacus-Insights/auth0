@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/auth0.v5/internal/testing/expect"
-
 	_ "github.com/joho/godotenv/autoload"
+
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 var m *Management
@@ -54,7 +54,7 @@ func TestNew(t *testing.T) {
 
 func TestOptionFields(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/", nil)
-	WithFields("foo", "bar").apply(r)
+	IncludeFields("foo", "bar").apply(r)
 
 	v := r.URL.Query()
 
@@ -68,7 +68,7 @@ func TestOptionFields(t *testing.T) {
 		t.Errorf("Expected %q, but got %q", includeFields, "true")
 	}
 
-	WithoutFields("foo", "bar").apply(r)
+	ExcludeFields("foo", "bar").apply(r)
 
 	includeFields = v.Get("include_fields")
 	if includeFields != "true" {
@@ -77,7 +77,6 @@ func TestOptionFields(t *testing.T) {
 }
 
 func TestOptionPage(t *testing.T) {
-
 	r, _ := http.NewRequest("GET", "/", nil)
 
 	Page(3).apply(r)
@@ -97,7 +96,6 @@ func TestOptionPage(t *testing.T) {
 }
 
 func TestOptionTotals(t *testing.T) {
-
 	r, _ := http.NewRequest("GET", "/", nil)
 
 	IncludeTotals(true).apply(r)
@@ -111,7 +109,6 @@ func TestOptionTotals(t *testing.T) {
 }
 
 func TestOptionParameter(t *testing.T) {
-
 	r, _ := http.NewRequest("GET", "/", nil)
 
 	Parameter("foo", "123").apply(r)
@@ -131,7 +128,6 @@ func TestOptionParameter(t *testing.T) {
 }
 
 func TestOptionDefauls(t *testing.T) {
-
 	r, _ := http.NewRequest("GET", "/", nil)
 
 	applyListDefaults([]RequestOption{
@@ -153,7 +149,6 @@ func TestOptionDefauls(t *testing.T) {
 }
 
 func TestStringify(t *testing.T) {
-
 	expected := `{
   "foo": "bar"
 }`
@@ -172,7 +167,6 @@ func TestStringify(t *testing.T) {
 }
 
 func TestRequestOptionContextCancel(t *testing.T) {
-
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // cancel the request
 
@@ -183,7 +177,6 @@ func TestRequestOptionContextCancel(t *testing.T) {
 }
 
 func TestRequestOptionContextTimeout(t *testing.T) {
-
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Millisecond)
 	defer cancel()
 
@@ -196,7 +189,6 @@ func TestRequestOptionContextTimeout(t *testing.T) {
 }
 
 func TestNew_WithInsecure(t *testing.T) {
-
 	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/v2/users/123":

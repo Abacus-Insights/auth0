@@ -3,13 +3,11 @@ package management
 import (
 	"testing"
 
-	"gopkg.in/auth0.v5/internal/testing/expect"
-
-	"gopkg.in/auth0.v5"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 func TestHook(t *testing.T) {
-
 	r := &Hook{
 		Name:      auth0.String("test-hook"),
 		Script:    auth0.String("function (user, context, callback) { callback(null, { user }); }"),
@@ -105,7 +103,6 @@ func TestHookSecretsIntersection(t *testing.T) {
 }
 
 func TestHookSecrets(t *testing.T) {
-
 	r := HookSecrets{
 		"SECRET1": "value1",
 		"SECRET2": "value2",

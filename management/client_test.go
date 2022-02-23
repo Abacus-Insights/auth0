@@ -6,12 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/auth0.v5"
-	"gopkg.in/auth0.v5/internal/testing/expect"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 func TestClient(t *testing.T) {
-
 	c := &Client{
 		Name: auth0.Stringf("Test Client (%s)",
 			time.Now().Format(time.StampMilli)),
@@ -38,7 +37,7 @@ func TestClient(t *testing.T) {
 
 	t.Run("List", func(t *testing.T) {
 		var cl *ClientList
-		cl, err = m.Client.List(WithFields("client_id"))
+		cl, err = m.Client.List(IncludeFields("client_id"))
 		if err != nil {
 			t.Error(err)
 		}
@@ -82,7 +81,6 @@ func TestClient(t *testing.T) {
 }
 
 func TestJWTConfiguration(t *testing.T) {
-
 	t.Run("MarshalJSON", func(t *testing.T) {
 		for u, expected := range map[*ClientJWTConfiguration]string{
 			{}:                                   `{}`,
@@ -110,5 +108,4 @@ func TestJWTConfiguration(t *testing.T) {
 			expect.Expect(t, jc.GetLifetimeInSeconds(), expected.GetLifetimeInSeconds())
 		}
 	})
-
 }

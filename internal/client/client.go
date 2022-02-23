@@ -13,10 +13,11 @@ import (
 	"github.com/PuerkitoBio/rehttp"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
-	"gopkg.in/auth0.v5"
+
+	"github.com/auth0/go-auth0"
 )
 
-// UserAgent is the default user agent string
+// UserAgent is the default user agent string.
 var UserAgent = fmt.Sprintf("Go-Auth0-SDK/%s", auth0.Version)
 
 // RoundTripFunc is an adapter to allow the use of ordinary functions as HTTP
@@ -57,7 +58,7 @@ func delay(attempt rehttp.Attempt) time.Duration {
 	return time.Duration(resetAtUnix-time.Now().Unix()) * time.Second
 }
 
-// RateLimitTransport wraps base transport with a customized "User-Agent" header
+// UserAgentTransport wraps base transport with a customized "User-Agent" header.
 func UserAgentTransport(base http.RoundTripper, userAgent string) http.RoundTripper {
 	if base == nil {
 		base = http.DefaultTransport
@@ -78,7 +79,7 @@ func dumpResponse(r *http.Response) {
 	log.Printf("\n%s\n\n", b)
 }
 
-// RateLimitTransport wraps base transport with the ability to log the contents
+// DebugTransport wraps base transport with the ability to log the contents
 // of requests and responses.
 func DebugTransport(base http.RoundTripper, debug bool) http.RoundTripper {
 	if base == nil {
@@ -140,7 +141,8 @@ func Wrap(base *http.Client, tokenSource oauth2.TokenSource, options ...Option) 
 	return client
 }
 
-func ClientCredentials(ctx context.Context, uri, clientID, clientSecret string) oauth2.TokenSource {
+// OAuth2ClientCredentials sets the oauth2 client credentials.
+func OAuth2ClientCredentials(ctx context.Context, uri, clientID, clientSecret string) oauth2.TokenSource {
 	return (&clientcredentials.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
@@ -151,6 +153,7 @@ func ClientCredentials(ctx context.Context, uri, clientID, clientSecret string) 
 	}).TokenSource(ctx)
 }
 
+// StaticToken sets a static token to be used for oauth2.
 func StaticToken(token string) oauth2.TokenSource {
 	return oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 }

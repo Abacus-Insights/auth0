@@ -3,11 +3,10 @@ package management
 import (
 	"testing"
 
-	"gopkg.in/auth0.v5"
+	"github.com/auth0/go-auth0"
 )
 
 func TestRuleConfig(t *testing.T) {
-
 	key := "foo"
 	r := &RuleConfig{Value: auth0.String("bar")}
 

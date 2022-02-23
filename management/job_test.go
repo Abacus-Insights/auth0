@@ -3,11 +3,10 @@ package management
 import (
 	"testing"
 
-	"gopkg.in/auth0.v5"
+	"github.com/auth0/go-auth0"
 )
 
 func TestJob(t *testing.T) {
-
 	var err error
 
 	c, err := m.Connection.ReadByName("Username-Password-Authentication")
@@ -90,5 +89,4 @@ func TestJob(t *testing.T) {
 		}
 		t.Log(job)
 	})
-
 }

@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/auth0.v5"
-	"gopkg.in/auth0.v5/management"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/management"
 )
 
 var (
@@ -136,7 +136,6 @@ func ExampleConnectionManager_List() {
 		// handle err
 	}
 	for _, c := range l.Connections {
-
 		fmt.Println(c.GetName())
 
 		if o, ok := c.Options.(*management.ConnectionOptions); ok {

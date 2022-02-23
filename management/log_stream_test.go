@@ -4,12 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/auth0.v5"
-	"gopkg.in/auth0.v5/internal/testing/expect"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 func TestLogStream(t *testing.T) {
-
 	l := &LogStream{
 		Name: auth0.Stringf("Test-LogStream-%d", time.Now().Unix()),
 		Type: auth0.String(LogStreamTypeDatadog),
@@ -77,7 +76,6 @@ func TestLogStream(t *testing.T) {
 	})
 
 	t.Run("Update", func(t *testing.T) {
-
 		id := l.GetID()
 
 		l.ID = nil   // read-only
@@ -106,9 +104,7 @@ func TestLogStream(t *testing.T) {
 }
 
 func TestLogStreamSink(t *testing.T) {
-
 	t.Run("AmazonEventBridge", func(t *testing.T) {
-
 		l := &LogStream{
 			Name: auth0.Stringf("Test-LogStream-%d", time.Now().Unix()),
 			Type: auth0.String(LogStreamTypeAmazonEventBridge),
@@ -140,7 +136,6 @@ func TestLogStreamSink(t *testing.T) {
 	})
 
 	t.Run("AzureEventGrid", func(t *testing.T) {
-
 		t.Skip("this test requires an active subscription")
 
 		l := &LogStream{

@@ -3,16 +3,14 @@ package management
 import (
 	"testing"
 
-	"gopkg.in/auth0.v5"
+	"github.com/auth0/go-auth0"
 )
 
 func TestLog(t *testing.T) {
-
 	// Save a log from the listing so we can look it up by ID later
 	var firstLog *Log
 
 	t.Run("List", func(t *testing.T) {
-
 		// Limit results to 5 entries, starting from the first page
 		logs, err := m.Log.List(Page(1), PerPage(5))
 		if err != nil {
@@ -20,7 +18,6 @@ func TestLog(t *testing.T) {
 		}
 
 		for i, log := range logs {
-
 			t.Logf("%v\n", log)
 
 			// Save the first log for reading later

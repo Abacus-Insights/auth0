@@ -3,12 +3,11 @@ package management
 import (
 	"testing"
 
-	"gopkg.in/auth0.v5"
-	"gopkg.in/auth0.v5/internal/testing/expect"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 func TestEmail(t *testing.T) {
-
 	e := &Email{
 		Name:               auth0.String("smtp"),
 		Enabled:            auth0.Bool(true),
@@ -45,7 +44,6 @@ func TestEmail(t *testing.T) {
 	})
 
 	t.Run("Update", func(t *testing.T) {
-
 		e.Enabled = auth0.Bool(false)
 		e.DefaultFromAddress = auth0.String("info@example.com")
 

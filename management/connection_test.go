@@ -7,12 +7,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"gopkg.in/auth0.v5"
-	"gopkg.in/auth0.v5/internal/testing/expect"
+	"github.com/auth0/go-auth0"
+	"github.com/auth0/go-auth0/internal/testing/expect"
 )
 
 func TestConnection(t *testing.T) {
-
 	c := &Connection{
 		Name:     auth0.Stringf("Test-Connection-%d", time.Now().Unix()),
 		Strategy: auth0.String("auth0"),
@@ -93,7 +92,6 @@ func TestConnection(t *testing.T) {
 	})
 
 	t.Run("Update", func(t *testing.T) {
-
 		id := c.GetID()
 
 		c.ID = nil       // read-only
@@ -155,7 +153,6 @@ func TestConnection(t *testing.T) {
 }
 
 func TestConnectionOptions(t *testing.T) {
-
 	t.Run("GoogleOAuth2", func(t *testing.T) {
 		g := &Connection{
 			Name:     auth0.Stringf("Test-Connection-%d", time.Now().Unix()),
@@ -174,7 +171,6 @@ func TestConnectionOptions(t *testing.T) {
 		defer func() {
 			m.Connection.Delete(g.GetID())
 			assertDeleted(t, g)
-
 		}()
 
 		err := m.Connection.Create(g)
@@ -203,6 +199,9 @@ func TestConnectionOptions(t *testing.T) {
 		}
 		c, _ = m.Connection.Read(g.GetID())
 		o, ok = c.Options.(*ConnectionOptionsGoogleOAuth2)
+		if !ok {
+			t.Fatalf("unexpected type %T", o)
+		}
 		expect.Expect(t, o.GetNonPersistentAttrs(), []string{"gender", "ethnicity", "favorite_color"})
 
 		o.NonPersistentAttrs = &[]string{""}
@@ -218,6 +217,9 @@ func TestConnectionOptions(t *testing.T) {
 			log.Fatal(err)
 		}
 		o, ok = c.Options.(*ConnectionOptionsGoogleOAuth2)
+		if !ok {
+			t.Fatalf("unexpected type %T", o)
+		}
 		expect.Expect(t, o.GetNonPersistentAttrs(), []string{""})
 
 		t.Logf("%s\n", g)
@@ -233,13 +235,13 @@ func TestConnectionOptions(t *testing.T) {
 				BasicProfile:    auth0.Bool(true),
 				ExtendedProfile: auth0.Bool(true),
 				Groups:          auth0.Bool(true),
+				Admin:           auth0.Bool(true),
 			},
 		}
 
 		defer func() {
 			m.Connection.Delete(g.GetID())
 			assertDeleted(t, g)
-
 		}()
 
 		err := m.Connection.Create(g)
@@ -257,8 +259,8 @@ func TestConnectionOptions(t *testing.T) {
 		expect.Expect(t, o.GetBasicProfile(), true)
 		expect.Expect(t, o.GetExtendedProfile(), true)
 		expect.Expect(t, o.GetGroups(), true)
-		expect.Expect(t, o.GetAdmin(), false)
-		expect.Expect(t, o.Scopes(), []string{"basic_profile", "ext_profile", "ext_groups"})
+		expect.Expect(t, o.GetAdmin(), true)
+		expect.Expect(t, o.Scopes(), []string{"basic_profile", "ext_profile", "ext_groups", "ext_is_admin"})
 
 		o.NonPersistentAttrs = &[]string{"gender", "ethnicity", "favorite_color"}
 		err = m.Connection.Update(g.GetID(), &Connection{
@@ -269,6 +271,9 @@ func TestConnectionOptions(t *testing.T) {
 		}
 		c, _ = m.Connection.Read(g.GetID())
 		o, ok = c.Options.(*ConnectionOptionsGoogleApps)
+		if !ok {
+			t.Fatalf("unexpected type %T", o)
+		}
 		expect.Expect(t, o.GetNonPersistentAttrs(), []string{"gender", "ethnicity", "favorite_color"})
 
 		o.NonPersistentAttrs = &[]string{""}
@@ -284,6 +289,9 @@ func TestConnectionOptions(t *testing.T) {
 			log.Fatal(err)
 		}
 		o, ok = c.Options.(*ConnectionOptionsGoogleApps)
+		if !ok {
+			t.Fatalf("unexpected type %T", o)
+		}
 		expect.Expect(t, o.GetNonPersistentAttrs(), []string{""})
 
 		t.Logf("%s\n", g)
@@ -303,7 +311,6 @@ func TestConnectionOptions(t *testing.T) {
 
 		o.NonPersistentAttrs = &[]string{"gender", "ethnicity", "favorite_color"}
 		expect.Expect(t, o.GetNonPersistentAttrs(), []string{"gender", "ethnicity", "favorite_color"})
-
 	})
 
 	t.Run("OAuth2", func(t *testing.T) {
@@ -331,7 +338,6 @@ func TestConnectionOptions(t *testing.T) {
 	})
 
 	t.Run("Email", func(t *testing.T) {
-
 		e := &Connection{
 			Name:     auth0.Stringf("Test-Connection-Email-%d", time.Now().Unix()),
 			Strategy: auth0.String("email"),
@@ -389,13 +395,15 @@ func TestConnectionOptions(t *testing.T) {
 		}
 		e, _ = m.Connection.Read(e.GetID())
 		o, ok = e.Options.(*ConnectionOptionsEmail)
+		if !ok {
+			t.Fatalf("unexpected type %T", o)
+		}
 
 		expect.Expect(t, o.GetNonPersistentAttrs(), []string{"gender", "ethnicity", "favorite_color"})
 		t.Logf("%s\n", e)
 	})
 
 	t.Run("SMS", func(t *testing.T) {
-
 		s := &Connection{
 			Name:     auth0.Stringf("Test-Connection-SMS-%d", time.Now().Unix()),
 			Strategy: auth0.String("sms"),
@@ -451,7 +459,6 @@ func TestConnectionOptions(t *testing.T) {
 	})
 
 	t.Run("CustomSMS", func(t *testing.T) {
-
 		s := &Connection{
 			Name:     auth0.Stringf("Test-Connection-Custom-SMS-%d", time.Now().Unix()),
 			Strategy: auth0.String("sms"),
@@ -464,10 +471,10 @@ func TestConnectionOptions(t *testing.T) {
 					Length:   auth0.Int(5),
 				},
 				BruteForceProtection: auth0.Bool(true),
-				DisableSignup:        auth0.Bool(false),
+				DisableSignup:        auth0.Bool(true),
 				Name:                 auth0.String("Test-Connection-Custom-SMS"),
 				Provider:             auth0.String("sms_gateway"),
-				GatewayUrl:           auth0.String("https://test.com/sms-gateway"),
+				GatewayURL:           auth0.String("https://test.com/sms-gateway"),
 				GatewayAuthentication: &ConnectionGatewayAuthentication{
 					Method:              auth0.String("bearer"),
 					Subject:             auth0.String("test.us.auth0.com:sms"),
@@ -503,7 +510,7 @@ func TestConnectionOptions(t *testing.T) {
 		expect.Expect(t, o.GetDisableSignup(), true)
 		expect.Expect(t, o.GetName(), "Test-Connection-Custom-SMS")
 		expect.Expect(t, o.GetProvider(), "sms_gateway")
-		expect.Expect(t, o.GetGatewayUrl(), "https://test.com/sms-gateway")
+		expect.Expect(t, o.GetGatewayURL(), "https://test.com/sms-gateway")
 		expect.Expect(t, o.GetGatewayAuthentication().GetMethod(), "bearer")
 		expect.Expect(t, o.GetGatewayAuthentication().GetSubject(), "test.us.auth0.com:sms")
 		expect.Expect(t, o.GetGatewayAuthentication().GetAudience(), "test.com/sms-gateway")
@@ -515,7 +522,6 @@ func TestConnectionOptions(t *testing.T) {
 	})
 
 	t.Run("SAML", func(t *testing.T) {
-
 		g := &Connection{
 			Name:     auth0.Stringf("Test-SAML-Connection-%d", time.Now().Unix()),
 			Strategy: auth0.String("samlp"),
@@ -586,7 +592,7 @@ ZsUkLw2I7zI/dNlWdB8Xp7v+3w9sX5N3J/WuJ1KOO5m26kRlHQo7EzT3974g
 			t.Fatal(err)
 		}
 
-		if a.ProvisioningTicketUrl == nil {
+		if a.ProvisioningTicketURL == nil {
 			t.Fatal("provisioning_ticket_url should be returned")
 		}
 
@@ -616,7 +622,7 @@ ZsUkLw2I7zI/dNlWdB8Xp7v+3w9sX5N3J/WuJ1KOO5m26kRlHQo7EzT3974g
 		err := m.Connection.Update(
 			a.GetID(),
 			&Connection{
-				ProvisioningTicketUrl: auth0.String("https://invalid-domain.com"),
+				ProvisioningTicketURL: auth0.String("https://invalid-domain.com"),
 				Options:               o,
 			},
 		)
